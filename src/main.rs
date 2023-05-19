@@ -30,7 +30,7 @@ fn main() {
     // Runtime loop
     loop {
         println!(
-            "\nWould you like to? (eg: '1')\n1. View tasks\n2. Add a task\n3. Complete task\n4. Delete task"
+            "\nWhat would you like to? (eg: '1')\n1. View tasks\n2. Add a task\n3. Complete task\n4. Delete task"
         );
         let resp = read_line();
 
