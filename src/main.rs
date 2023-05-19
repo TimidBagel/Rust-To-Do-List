@@ -172,7 +172,7 @@ fn complete_task(tasks: &mut Vec<Task>, index: usize) {
     if let Some(task) = tasks.get_mut(index) {
         task.done = true;
     } else {
-        println!("Invalid task index! (im gay)");
+        println!("Invalid task index!");
     }
 }
 
@@ -181,6 +181,6 @@ fn delete_task(tasks: &mut Vec<Task>, index: usize) {
     if let Some(_) = tasks.get(index) {
         tasks.remove(index);
     } else {
-        println!("Invalid task index! >:(");
+        println!("Invalid task index!");
     }
 }
