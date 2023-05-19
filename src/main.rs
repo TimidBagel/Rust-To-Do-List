@@ -17,8 +17,12 @@ struct Task {
 fn main() {
     // Initializes vector of tasks, and copies data from `tasks.json` if file exists.
     let mut tasks: Vec<Task> = match read_tasks() {
-        Ok(tasks) => tasks,
+        Ok(tasks) => {
+            println!("loaded tasks from `tasks.json`");
+            tasks
+        }
         Err(_) => {
+            println!("`tasks.json` is empty, no tasks loaded.");
             vec![]
         }
     };
@@ -64,24 +68,33 @@ fn main() {
 
             // If other input, save task vector to `tasks.json` and exit program.
             _ => {
-                println!("Serializing data...");
+                println!("\nRemoving completed tasks...");
+                remove_complete_tasks(&mut tasks);
+                println!("Completed tasks removed");
+
+                println!("\nSerializing data...");
                 let serialized_tasks = serde_json::to_string(&tasks).expect("Serialization failed");
                 println!("Data serialized");
 
-                println!("Creating file...");
+                println!("\nCreating file...");
                 let mut file = File::create("tasks.json").expect("File creation failed");
                 println!("File created");
 
-                println!("Saving work...");
+                println!("\nSaving work...");
                 file.write_all(serialized_tasks.as_bytes())
                     .expect("Writing to file failed");
                 println!("Work saved");
 
-                println!("Exiting successfully");
+                println!("\nExiting successfully");
                 break;
             }
         }
     }
+}
+
+// Removes all completed tasks from tasks vector.
+fn remove_complete_tasks(tasks: &mut Vec<Task>){
+    tasks.retain(|task| !task.done);
 }
 
 // Reads tasks from the "tasks.json" file and returns them as a vector.
@@ -99,13 +112,13 @@ fn add_task(tasks: &mut Vec<Task>, new_task: Task) {
 
 // Creates a new task by prompting the user for its name, description, and due date.
 fn create_task() -> Task {
-    println!("Enter a name for 'new_task':");
+    println!("\nEnter a name for 'new_task':");
     let name: String = read_line();
 
-    println!("Enter a short description for '{name}':");
+    println!("\nEnter a short description for '{name}':");
     let desc: String = read_line();
 
-    println!("Enter a due date for '{name}':");
+    println!("\nEnter a due date for '{name}':");
     let due_date: String = read_line();
 
     let done: bool = false;
@@ -123,13 +136,13 @@ fn read_index_input(tasks: &[Task]) -> Option<usize> {
     let index: usize = match read_line().parse::<usize>() {
         Ok(num) => num - 1,
         Err(_) => {
-            println!("Input must be a valid index!");
+            println!("\nInput must be a valid index!");
             return None;
         }
     };
 
     if index >= tasks.len() {
-        println!("Invalid task index!");
+        println!("\nInvalid task index!");
         return None;
     } else {
         return Some(index);
@@ -172,7 +185,7 @@ fn complete_task(tasks: &mut Vec<Task>, index: usize) {
     if let Some(task) = tasks.get_mut(index) {
         task.done = true;
     } else {
-        println!("Invalid task index!");
+        println!("\nInvalid task index!");
     }
 }
 
@@ -181,6 +194,6 @@ fn delete_task(tasks: &mut Vec<Task>, index: usize) {
     if let Some(_) = tasks.get(index) {
         tasks.remove(index);
     } else {
-        println!("Invalid task index!");
+        println!("\nInvalid task index!");
     }
 }
